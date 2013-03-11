@@ -1,0 +1,54 @@
+# -*- coding: utf-8 -*-
+<%inherit file="/cleanblue/base.html" />
+
+<%def name="nav()" >     
+% if user.is_staff:
+ <div class="navbox">
+        <h3>管理</h3>
+        <div class="navbox-body">
+            <ul>
+                <li>&raquo; <a href="/admin/">管理入口</a></li>
+                <li>&raquo; <a href="/admin/news/entry/add/">新建新闻</a></li>
+            </ul>
+        </div>
+ </div>
+% endif
+</%def>
+
+<%def name="category()">
+<div class="navbox">
+    <h3>新闻类别</h3>
+    <div class="navbox-body">
+        <ul>
+            % for category in categorys:
+                <li>&raquo; <a href="/category/${category.id}/">${category.name}</a></li>
+            % endfor
+        </ul>
+    </div>
+</div>
+</%def>
+
+<%def name="entry()" >     
+<ul id="entrys">
+    % for entry in entries:
+        <li class="entry" id="entry-${ entry.id }">
+            <h3>
+                <a href="/entry/${ entry.id }">${ entry.title }</a>
+                % if user.is_staff:
+                	<span class="edit">( <a href=/admin/news/entry/${ entry.id }/>编辑</a> )</span>
+                % endif
+            </h3>
+            <span class="time">${ entry.author } 发布于 ${ entry.pub_date } | 类别：<a href=/category/${ entry.category_id }>${ entry.category }</a></span>
+            <div class="ebody">
+                ${ entry.body_html }
+            </div>
+            <div class="meta">       
+             浏览数：${ entry.views }
+            </div>
+        </li>
+    % endfor
+</ul>
+
+</%def>
+
+

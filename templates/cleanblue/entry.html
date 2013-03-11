@@ -1,0 +1,89 @@
+﻿# -*- coding: utf-8 -*-
+
+<%inherit file="/cleanblue/base.html" />
+
+<%def name="nav()" >     
+    % if user.is_staff:
+        <div class="navbox">
+            <h3>管理</h3>
+            <div class="navbox-body">
+                <ul>
+                    <li>&raquo; <a href="/admin/">管理入口</a></li>
+                    <li>&raquo; <a href="/admin/news/entry/add/">新建新闻</a></li>
+                </ul>
+            </div>
+        </div>
+    % endif
+</%def>
+
+<%def name="category()">
+<div class="navbox">
+    <h3>新闻类别</h3>
+    <div class="navbox-body">
+        <ul>
+            % for category in categorys:
+                <li>&raquo; <a href="/category/${category.id}/">${category.name}</a></li>
+            % endfor
+        </ul>
+    </div>
+</div>
+</%def>
+
+<%def name="entry()" >  
+    <ul id="entries">
+    <li class="entry" id="entry-${ entry_.id }">
+        <h2>
+            ${ entry_.title }
+			% if user.is_staff:
+			    <span class="edit">(<a href="/admin/news/entry/${ entry_.id }/">编辑</a>)</span>
+			% endif
+        </h2>
+        <span class="time"> ${ entry_.author } 发布于 ${ entry_.pub_date }| 类别：${ entry_.category } </span>
+        
+		<a href="javascript:zoomIn()">字体放大</a> | <a href="javascript:zoomOut()">字体缩小</a> 
+	    <div id="ebody" class="ebody" style="font-size:12px">
+            <p>${ entry_.body_html }</p>
+        </div>
+		<script>
+			$(document).ready(function(){
+				getFontSize();
+			});
+		</script>
+        <div class="meta">
+            <ul class="tags">
+                <p>浏览数:${ entry_.views } 次 | 
+				    <a id="good" href="#">顶</a><label id="good-num" >${ entry_.good } </label> | 
+					<a id="bad" href="#">踩</a> <label id="bad-num"  >${ entry_.bad } </label>
+				</p>
+            </ul>
+        </div>
+		<script>
+            $(document).ready(function(){
+                $('#good').click(function(){
+                    $.ajax({
+                        url:'/goodnews/${ entry_.id }',
+                        type: "get",
+                        success: function(){
+                            var good_num = parseInt($('#good-num').text()) ;
+                            $('#good-num').html(good_num + 1);
+                        }
+                    });
+                });
+                $('#bad').click(function(){
+                    $.ajax({
+                        url:'/badnews/${ entry_.id }',
+                        type: "get",
+                        success: function(){
+                            var bad_num = parseInt($('#bad-num').text()) ;
+                            $('#bad-num').html(bad_num + 1);
+                        }
+                    });
+                });
+            });
+
+        </script>
+    </li>
+    </ul>
+</%def>
+
+
